@@ -90,7 +90,7 @@ def get_toukibo(code):
             data = json.loads(response.read().decode('utf-8'))
             
             # 時刻を読みやすく
-            dt = datetime.fromisoformat(data['published_at'].replace("Z", "+00:00"))
+            dt = datetime.fromisoformat(data['published_at'].replace('Z', '+00:00'))
             readable_datetime = dt.strftime('%Y年%m月%d日 %H時%M分%S秒')
             
             # 役員を読みやすく
