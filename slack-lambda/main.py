@@ -87,6 +87,8 @@ def get_toukibo(code):
     req = urllib.request.Request(url, headers=headers, method="GET")
     try:
         with urllib.request.urlopen(req) as response:
+            if response.status != 200:
+                raise urllib.error.HTTPError(url, response.status, response.reason, response.headers, response)
             data = json.loads(response.read().decode('utf-8'))
             
             # 時刻を読みやすく
@@ -115,7 +117,7 @@ def get_toukibo(code):
 法人解散日: {data['houjin_dissolved_at']}
 会社継続日: {data['houjin_continued_at']}"""
     except urllib.error.HTTPError as e:
-        return 'エラーが発生しました: {} {}'.format(e.code, e.reason)
+        return 'エラーが発生しました: {} {}'.format(e.code, e.read().decode('utf-8'))
     except Exception as e:
         return '予期せぬエラーが発生しました: {}'.format(str(e))
 
@@ -131,7 +133,8 @@ def get_usage(url):
             data = json.loads(response.read().decode('utf-8'))
             return data['count']
     except urllib.error.HTTPError as e:
-        return 'エラーが発生しました: {} {}'.format(e.code, e.reason)
+        data =  e.read().decode('utf-8')
+        return 'エラーが発生しました: {} {}'.format(e.code, data)
     except Exception as e:
         return '予期せぬエラーが発生しました: {}'.format(str(e))
 
