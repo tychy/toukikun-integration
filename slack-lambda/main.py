@@ -77,7 +77,7 @@ def send_message_to_slack(channel, text):
         return response.read().decode('utf-8')
 
 def get_toukibo(code):
-    url = 'https://test.tychy.jp/v1/toukikun/9011001155105'
+    url = 'https://api.tychy.jp/v1/toukikun/{}'.format(code)
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {os.environ['TOUKIKUN_API_TOKEN']}',
@@ -136,11 +136,11 @@ def get_usage(url):
         return '予期せぬエラーが発生しました: {}'.format(str(e))
 
 def get_current_usage():
-    url = 'https://test.tychy.jp/v1/currentmonthusage'
+    url = 'https://api.tychy.jp/v1/currentmonthusage'
     return get_usage(url)
 
 def get_previous_usage():
-    url = 'https://test.tychy.jp/v1/previousmonthusage'
+    url = 'https://api.tychy.jp/v1/previousmonthusage'
     return get_usage(url)
 
 
