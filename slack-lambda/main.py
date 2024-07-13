@@ -87,7 +87,9 @@ def get_toukibo(code):
     req = urllib.request.Request(url, headers=headers, method="GET")
     try:
         with urllib.request.urlopen(req) as response:
-            if response.status != 200:
+            if response.status == 202:
+                return f"法人番号{code}の登記簿取得リクエストを受け付けました。しばらく後に再度お試しください。"
+            elif response.status != 200:
                 raise urllib.error.HTTPError(url, response.status, response.reason, response.headers, response)
             data = json.loads(response.read().decode('utf-8'))
             
@@ -117,7 +119,8 @@ def get_toukibo(code):
 法人解散日: {data['houjin_dissolved_at']}
 会社継続日: {data['houjin_continued_at']}"""
     except urllib.error.HTTPError as e:
-        return 'エラーが発生しました: {} {}'.format(e.code, e.read().decode('utf-8'))
+        data =  e.read().decode('utf-8')
+        return 'エラーが発生しました: {} {}'.format(e.code, data)
     except Exception as e:
         return '予期せぬエラーが発生しました: {}'.format(str(e))
 
