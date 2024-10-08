@@ -112,6 +112,7 @@ def get_toukibo(code):
 法人格　　: {data['houjin_kaku']}
 法人住所　: {data['houjin_address']}
 資本金　　: {data['houjin_capital']}
+発行済株式数: {data['houjin_stock']}
 役員　　　: {houjin_executive_names}
 代表者　　: {houjin_representative_names}
 法人設立日: {data['houjin_created_at']}
