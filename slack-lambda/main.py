@@ -36,9 +36,10 @@ def message_handler(channel, user, message):
     
     # 利用量
     if message == 'usage':
+        today_usage = get_today_usage()
         current_month_usage = get_current_usage()
         previous_month_usage = get_previous_usage()
-        send_message_to_slack(channel, f'<@{user}> 当月: {current_month_usage}件 前月:{previous_month_usage}件')
+        send_message_to_slack(channel, f'<@{user}> 今日: {today_usage}件 当月: {current_month_usage}件 前月:{previous_month_usage}件')
         return
     
     # 登記簿取得
@@ -103,22 +104,22 @@ def get_toukibo(code):
             # 代表者氏名を読みやすく
             houjin_representative_names = '　'.join(data['houjin_representative_names'])
 
-            return f"""法人番号{code}の登記簿取得が成功しました。
-登記簿発行時刻: {readable_datetime}
-登記簿URL: <{data['signed_url']}|URL> (有効期限3日)
-リクエストID: {data['request_id']}
-ファイルID: {data['file_id']}
-法人名　　: {data['houjin_name']}
-法人格　　: {data['houjin_kaku']}
-法人住所　: {data['houjin_address']}
-資本金　　: {data['houjin_capital']}
-発行済株式数: {data['houjin_stock']}
-役員　　　: {houjin_executive_names}
-代表者　　: {houjin_representative_names}
-法人設立日: {data['houjin_created_at']}
-法人破産日: {data['houjin_bankrupted_at']}
-法人解散日: {data['houjin_dissolved_at']}
-会社継続日: {data['houjin_continued_at']}"""
+            return (
+                f"法人番号{code}の登記簿取得が成功しました。\n"
+                f"登記簿発行時刻: {readable_datetime}\n"
+                f"リンク　　　　: <{data['signed_url']}|{data['signed_url']}>\n"
+                f"法人名　　　　: {data['houjin_name']}\n"
+                f"法人格　　　　: {data['houjin_kaku']}\n"
+                f"法人住所　　　: {data['houjin_address']}\n"
+                f"資本金　　　　: {data['houjin_capital']}\n"
+                f"発行済株式数　: {data['houjin_stock']}\n"
+                f"役員　　　　　: {houjin_executive_names}\n"
+                f"代表者　　　　: {houjin_representative_names}\n"
+                f"法人設立日　　: {data['houjin_created_at']}\n"
+                f"法人破産日　　: {data['houjin_bankrupted_at']}\n"
+                f"法人解散日　　: {data['houjin_dissolved_at']}\n"
+                f"会社継続日　　: {data['houjin_continued_at']}"
+            )
     except urllib.error.HTTPError as e:
         data =  e.read().decode('utf-8')
         return 'エラーが発生しました: {} {}'.format(e.code, data)
@@ -142,6 +143,10 @@ def get_usage(url):
     except Exception as e:
         return '予期せぬエラーが発生しました: {}'.format(str(e))
 
+def get_today_usage():
+    url = 'https://api.tychy.jp/v1/todayusage'
+    return get_usage(url)
+
 def get_current_usage():
     url = 'https://api.tychy.jp/v1/currentmonthusage'
     return get_usage(url)
@@ -149,5 +154,3 @@ def get_current_usage():
 def get_previous_usage():
     url = 'https://api.tychy.jp/v1/previousmonthusage'
     return get_usage(url)
-
-
